@@ -17,7 +17,7 @@ steps:
     configMode: 'manual'
     cliProjectKey: 'sonar-simple-project-test'
     cliSources: '.'
-    
+
 - script: |
     npm install
   displayName: 'npm install'
@@ -43,3 +43,10 @@ steps:
     targetPath: '$(Build.ArtifactStagingDirectory)'
     publishLocation: 'pipeline'
   displayName: 'Publish npm artifact'
+ 
+- task: SonarQubeAnalyze@6
+  inputs:
+    jdkversion: 'JAVA_HOME_17_X64'
+- task: SonarQubePublish@6
+  inputs:
+    pollingTimeoutSec: '300'
