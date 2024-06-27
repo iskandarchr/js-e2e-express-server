@@ -1,4 +1,11 @@
 trigger:
+- task: SonarQubePrepare@6
+  inputs:
+    SonarQube: 'sonar-simple-project-test'
+    scannerMode: 'CLI'
+    configMode: 'manual'
+    cliProjectKey: 'sonar-simple-project-test'
+    cliSources: '.'
 - main
 
 pool:
