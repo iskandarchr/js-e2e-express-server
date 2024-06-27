@@ -1,0 +1,52 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: UseNode@1
+  inputs:
+    version: '16.x'
+  displayName: 'Install Node.js'
+
+- task: SonarQubePrepare@6
+  inputs:
+    SonarQube: 'sonar-simple-project-test'
+    scannerMode: 'CLI'
+    configMode: 'manual'
+    cliProjectKey: 'sonar-simple-project-test'
+    cliSources: '.'
+
+- script: |
+    npm install
+  displayName: 'npm install'
+
+- script: |
+    npm run build
+  displayName: 'npm build'
+
+
+
+- task: CopyFiles@2
+  inputs:
+    sourceFolder: '$(Build.SourcesDirectory)'
+    contents: |
+       src/*
+       public/*
+    targetFolder: '$(Build.ArtifactStagingDirectory)'
+  displayName: 'Copy project files'
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    artifactName: e2e-server
+    targetPath: '$(Build.ArtifactStagingDirectory)'
+    publishLocation: 'pipeline'
+  displayName: 'Publish npm artifact'
+ 
+- task: SonarQubeAnalyze@6
+  inputs:
+    jdkversion: 'JAVA_HOME_17_X64'
+- task: SonarQubePublish@6
+  inputs:
+    pollingTimeoutSec: '300'
